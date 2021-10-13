@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\SubCategoryResource;
 use App\Http\Resources\SubCategoryResourceCollection;
-use App\Models\SubCategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -75,13 +74,33 @@ class SubCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request $request
-     * @param  SubCategory $subCategory
+     * @param $id
+     * @param Request $request
      * @return SubCategoryResource
      */
-    public function update(Request $request, SubCategory $subCategory)
+    public function update($id, Request $request)
     {
-        $subCategory = $this->subCategoryRepository->update($subCategory, $request->all());
+        $this->validate($request, [
+            "group_id"         => 'required',
+            "category_id"      => 'required',
+            "name"             => 'required',
+            "subcategory_code" => 'required',
+        ]);
+
+        DB::table('sub_categories')->where('id', $id)->update([
+            "group_id"         => $request['group_id'],
+            "category_id"      => $request['category_id'],
+            "name"             => $request['name'],
+            "slug"             => $request['slug'],
+            "icon"             => $request['icon'],
+            "subcategory_code" => $request['subcategory_code'],
+            "serial_no"        => $request['serial_no'],
+            "short_details"    => $request['short_details'],
+            "status"           => $request['status'],
+            "updated_at"    => Carbon::now(),
+        ]);
+
+        $subCategory = DB::table('sub_categories')->where('id', $id)->first();
 
         return new SubCategoryResource($subCategory);
     }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\GroupResource;
 use App\Http\Resources\GroupResourceCollection;
-use App\Models\Group;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -71,13 +70,29 @@ class GroupController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request  $request
-     * @param Group $group
+     * @param $id
+     * @param Request $request
      * @return GroupResource
      */
-    public function update(Request $request, Group $group)
+    public function update($id, Request $request)
     {
-        $group = $this->groupRepository->update($group, $request->all());
+        $this->validate($request, [
+            "name"       => 'required',
+            "group_code" => 'required',
+        ]);
+
+        DB::table('groups')->where('id', $id)->update([
+            "name"          => $request['name'],
+            "slug"          => $request['slug'],
+            "icon"          => $request['icon'],
+            "group_code"    => $request['category_code'],
+            "serial_no"     => $request['serial_no'],
+            "short_details" => $request['short_details'],
+            "status"        => $request['status'],
+            "updated_at"    => Carbon::now(),
+        ]);
+
+        $group = DB::table('groups')->where('id', $id)->first();
 
         return new GroupResource($group);
     }

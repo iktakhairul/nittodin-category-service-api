@@ -5,7 +5,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CategoryResourceCollection;
-use App\Models\Category;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -72,13 +71,31 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
+     * @param $id
      * @param Request $request
-     * @param Category $category
      * @return CategoryResource
      */
-    public function update(Request $request, Category $category)
+    public function update($id, Request $request)
     {
-        $category = $this->categoryRepository->update($category, $request->all());
+        $this->validate($request, [
+            "group_id"      => 'required',
+            "name"          => 'required',
+            "category_code" => 'required',
+        ]);
+
+        DB::table('categories')->where('id', $id)->update([
+            "group_id"      => $request['group_id'],
+            "name"          => $request['name'],
+            "slug"          => $request['slug'],
+            "icon"          => $request['icon'],
+            "category_code" => $request['category_code'],
+            "serial_no"     => $request['serial_no'],
+            "short_details" => $request['short_details'],
+            "status"        => $request['status'],
+            "updated_at"    => Carbon::now(),
+        ]);
+
+        $category = DB::table('categories')->where('id', $id)->first();
 
         return new CategoryResource($category);
     }
