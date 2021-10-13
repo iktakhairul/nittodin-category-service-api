@@ -14,5 +14,5 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return 'Welcome to Nittodin category microservices - Version: '.$router->app->version();
 });
