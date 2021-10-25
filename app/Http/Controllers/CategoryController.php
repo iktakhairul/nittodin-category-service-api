@@ -30,6 +30,19 @@ class CategoryController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return View
+     */
+    public function create()
+    {
+        $token = md5(uniqid(mt_rand(), true));
+        $editRow = null;
+
+        return view('category.category_inputs', compact('editRow', 'token'));
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param Request $request

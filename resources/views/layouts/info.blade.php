@@ -48,7 +48,7 @@
                             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
                                 <li  class="nav-item">
                                     <a class="nav-link" href="{{ url('categories') }}">
-                                        <i class="fas fa-fw fa-user "></i>
+                                        <i class="fas fa-fw fa-industry "></i>
                                         <p>{{ __('Category') }}</p>
                                     </a>
                                 </li>
@@ -72,6 +72,6 @@
                     @yield('content')
                 </div>
             </div>
-            @yield('additional-js')
+            @yield('content_js')
     </body>
 </html>
