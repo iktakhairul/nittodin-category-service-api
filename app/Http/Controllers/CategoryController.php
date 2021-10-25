@@ -7,6 +7,7 @@ use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CategoryResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
@@ -14,13 +15,18 @@ class CategoryController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
-     * @return CategoryResourceCollection
+     * @return object
+     * @return View
      */
     public function index(Request $request)
     {
         $categories = DB::table('categories')->get();
 
-        return new CategoryResourceCollection($categories);
+        if (explode("/",$request->path())[0] === 'api'){
+            return new CategoryResourceCollection($categories);
+        }
+
+        return view('category.index', compact('categories'));
     }
 
     /**

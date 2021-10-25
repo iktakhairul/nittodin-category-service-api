@@ -15,13 +15,17 @@ class GroupController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
+     * @return object
      * @return GroupResourceCollection
      */
     public function index(Request $request)
     {
         $groups = DB::table('groups')->get();
 
-        return new GroupResourceCollection($groups);
+        if (explode("/",$request->path())[0] === 'api'){
+            return new GroupResourceCollection($groups);
+        }
+        return view('group.index', compact('groups'));
     }
 
     /**

@@ -15,13 +15,17 @@ class SubCategoryController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
+     * @return object
      * @return SubCategoryResourceCollection
      */
     public function index(Request $request)
     {
         $subCategories = DB::table('sub_categories')->get();
 
-        return new SubCategoryResourceCollection($subCategories);
+        if (explode("/",$request->path())[0] === 'api'){
+            return new SubCategoryResourceCollection($subCategories);
+        }
+        return view('subcategory.index', compact('subCategories'));
     }
 
     /**
