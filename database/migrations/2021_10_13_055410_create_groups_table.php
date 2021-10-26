@@ -21,7 +21,7 @@ class CreateGroupsTable extends Migration
             $table->string('group_code')->nullable();
             $table->string('serial_no')->nullable();
             $table->string('short_details')->nullable();
-            $table->string('status')->default(0)->nullable();
+            $table->string('status')->default('Inactive')->nullable();
             $table->timestamps();
         });
     }

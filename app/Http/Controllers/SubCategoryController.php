@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class SubCategoryController extends Controller
 {
@@ -29,6 +30,21 @@ class SubCategoryController extends Controller
     }
 
     /**
+     * Execute input field for store new resource.
+     *
+     * @return View
+     */
+    public function create()
+    {
+        $groups = DB::table('groups')->get();
+        $categories = DB::table('categories')->get();
+        $token = md5(uniqid(mt_rand(), true));
+        $editRow = null;
+
+        return view('subcategory.sub-category_inputs', compact('editRow', 'groups', 'categories', 'token'));
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  Request $request
@@ -37,23 +53,24 @@ class SubCategoryController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            "group_id"         => 'required',
-            "category_id"      => 'required',
-            "name"             => 'required',
-            "subcategory_code" => 'required',
+            'group_id'         => 'required|exists:groups,id',
+            'category_id'      => 'required|exists:categories,id',
+            'name'             => 'required|unique:sub_categories',
+            'subcategory_code' => 'required|unique:sub_categories',
+            'serial_no'        => 'required|unique:sub_categories',
         ]);
 
         $data = [
-            "group_id"         => $request['group_id'],
-            "category_id"      => $request['category_id'],
-            "name"             => $request['name'],
-            "slug"             => $request['slug'],
-            "icon"             => $request['icon'],
-            "subcategory_code" => $request['subcategory_code'],
-            "serial_no"        => $request['serial_no'],
-            "short_details"    => $request['short_details'],
-            "status"           => $request['status'],
-            "created_at"       => Carbon::now(),
+            'group_id'         => $request['group_id'],
+            'category_id'      => $request['category_id'],
+            'name'             => $request['name'],
+            'slug'             => $request['slug'] ?? $request['group_id'].'-'.$request['category_id'].'-'.$request['category_code'].'-'.$request['serial_no'],
+            'icon'             => $request['icon'],
+            'subcategory_code' => $request['subcategory_code'],
+            'serial_no'        => $request['serial_no'],
+            'short_details'    => $request['short_details'],
+            'status'           => $request['status'],
+            'created_at'       => Carbon::now(),
         ];
 
         $subCategory_id = DB::table('sub_categories')->insertGetId($data);
@@ -74,6 +91,20 @@ class SubCategoryController extends Controller
 
         return new SubCategoryResource($subCategory);
     }
+    /**
+     * Get specific resource for edit.
+     *
+     * @return View
+     */
+    public function edit($id)
+    {
+        $groups = DB::table('groups')->get();
+        $token = md5(uniqid(mt_rand(), true));
+        $editRow = DB::table('categories')->where('id', $id)->first();
+
+        return view('category.category_inputs', compact('editRow', 'groups', 'token'));
+    }
+
 
     /**
      * Update the specified resource in storage.
@@ -85,23 +116,23 @@ class SubCategoryController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-            "group_id"         => 'required',
-            "category_id"      => 'required',
-            "name"             => 'required',
-            "subcategory_code" => 'required',
+            'group_id'         => 'required',
+            'category_id'      => 'required',
+            'name'             => 'required',
+            'subcategory_code' => 'required',
         ]);
 
         DB::table('sub_categories')->where('id', $id)->update([
-            "group_id"         => $request['group_id'],
-            "category_id"      => $request['category_id'],
-            "name"             => $request['name'],
-            "slug"             => $request['slug'],
-            "icon"             => $request['icon'],
-            "subcategory_code" => $request['subcategory_code'],
-            "serial_no"        => $request['serial_no'],
-            "short_details"    => $request['short_details'],
-            "status"           => $request['status'],
-            "updated_at"    => Carbon::now(),
+            'group_id'         => $request['group_id'],
+            'category_id'      => $request['category_id'],
+            'name'             => $request['name'],
+            'slug'             => $request['slug'],
+            'icon'             => $request['icon'],
+            'subcategory_code' => $request['subcategory_code'],
+            'serial_no'        => $request['serial_no'],
+            'short_details'    => $request['short_details'],
+            'status'           => $request['status'],
+            'updated_at'    => Carbon::now(),
         ]);
 
         $subCategory = DB::table('sub_categories')->where('id', $id)->first();
@@ -113,12 +144,36 @@ class SubCategoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param $id
+     * @param Request $request
      * @return Response|string
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         DB::table('sub_categories')->where('id', $id)->delete();
 
-        return response()->json(null, 204);
+        if (explode("/",$request->path())[0] === 'api'){
+            return response()->json(null, 204);
+        }
+
+        return redirect('sub-categories');
+    }
+
+    /**
+     * Update specified resource status.
+     *
+     * @param $id
+     * @return null
+     */
+    public function update_status($id)
+    {
+        $subCategory = DB::table('sub_categories')->find($id);
+
+        if($subCategory->status === 'Active') {
+            DB::table('sub_categories')->where('id', $id)->update(['status' => 'Inactive']);
+        }elseif($subCategory->status === 'Inactive') {
+            DB::table('sub_categories')->where('id', $id)->update(['status' => 'Active']);
+        }
+
+        return redirect('sub-categories');
     }
 }

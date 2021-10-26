@@ -46,7 +46,10 @@ $router->get('category/update-status/{id}', 'CategoryController@update_status');
  * Sub-Category Routes
  */
 $router->get('sub-categories', 'SubCategoryController@index');
-$router->post('sub-category', 'SubCategoryController@store');
-$router->get('sub-category/{id}', 'SubCategoryController@show');
-$router->put('sub-category/{id}', 'SubCategoryController@update');
-$router->delete('sub-category/{id}', 'SubCategoryController@destroy');
+$router->get('sub-category/create', 'SubCategoryController@create');
+$router->post('sub-category/store', 'SubCategoryController@store');
+$router->get('sub-category/show/{id}', 'SubCategoryController@show');
+$router->get('sub-category/edit/{id}', 'SubCategoryController@edit');
+$router->post('sub-category/update/{id}', 'SubCategoryController@update');
+$router->get('sub-category/destroy/{id}', 'SubCategoryController@destroy');
+$router->get('sub-category/update-status/{id}', 'SubCategoryController@update_status');

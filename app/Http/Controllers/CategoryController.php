@@ -32,7 +32,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Execute input field for store new resource.
      *
      * @return View
      */
@@ -97,7 +97,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Get specific resource for edit.
      *
      * @return View
      */
@@ -176,11 +176,9 @@ class CategoryController extends Controller
     {
         $category = DB::table('categories')->find($id);
 
-        if($category->status === 'Active')
-        {
+        if($category->status === 'Active') {
             DB::table('categories')->where('id', $id)->update(['status' => 'Inactive']);
-        }elseif($category->status === 'Inactive')
-        {
+        }elseif($category->status === 'Inactive') {
             DB::table('categories')->where('id', $id)->update(['status' => 'Active']);
         }
 

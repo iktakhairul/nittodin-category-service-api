@@ -23,7 +23,7 @@ class CreateSubCategoriesTable extends Migration
             $table->string('subcategory_code')->nullable();
             $table->string('serial_no')->nullable();
             $table->string('short_details')->nullable();
-            $table->string('status')->default(0)->nullable();
+            $table->string('status')->default('Inactive')->nullable();
             $table->timestamps();
         });
     }

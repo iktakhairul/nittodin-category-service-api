@@ -31,7 +31,7 @@ class GroupController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Execute input field for store new resource.
      *
      * @return View
      */
@@ -80,7 +80,7 @@ class GroupController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specific resource.
      *
      * @param $id
      * @return GroupResource
@@ -93,7 +93,7 @@ class GroupController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Get specific resource for edit.
      *
      * @return View
      */
@@ -166,13 +166,11 @@ class GroupController extends Controller
      */
     public function update_status($id)
     {
-        $category = DB::table('groups')->find($id);
+        $group = DB::table('groups')->find($id);
 
-        if($category->status === 'Active')
-        {
+        if($group->status === 'Active') {
             DB::table('groups')->where('id', $id)->update(['status' => 'Inactive']);
-        }elseif($category->status === 'Inactive')
-        {
+        }elseif($group->status === 'Inactive') {
             DB::table('groups')->where('id', $id)->update(['status' => 'Active']);
         }
 
