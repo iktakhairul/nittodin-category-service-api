@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategoryResource;
 use App\Http\Resources\SubCategoryResource;
 use App\Http\Resources\SubCategoryResourceCollection;
 use Carbon\Carbon;
@@ -26,7 +27,10 @@ class SubCategoryController extends Controller
         if (explode("/",$request->path())[0] === 'api'){
             return new SubCategoryResourceCollection($subCategories);
         }
-        return view('subcategory.index', compact('subCategories'));
+        $groups = DB::table('groups')->get();
+        $categories = DB::table('categories')->get();
+
+        return view('subcategory.index', compact('groups', 'categories', 'subCategories'));
     }
 
     /**
@@ -47,8 +51,9 @@ class SubCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request $request
-     * @return SubCategoryResource
+     * @param Request $request
+     * @return object
+     * @return null
      */
     public function store(Request $request)
     {
@@ -64,7 +69,7 @@ class SubCategoryController extends Controller
             'group_id'         => $request['group_id'],
             'category_id'      => $request['category_id'],
             'name'             => $request['name'],
-            'slug'             => $request['slug'] ?? $request['group_id'].'-'.$request['category_id'].'-'.$request['category_code'].'-'.$request['serial_no'],
+            'slug'             => $request['slug'] ?? $request['group_id'].'-'.$request['category_id'].'-'.$request['subcategory_code'].'-'.$request['serial_no'],
             'icon'             => $request['icon'],
             'subcategory_code' => $request['subcategory_code'],
             'serial_no'        => $request['serial_no'],
@@ -76,7 +81,11 @@ class SubCategoryController extends Controller
         $subCategory_id = DB::table('sub_categories')->insertGetId($data);
         $subCategory = DB::table('sub_categories')->where('id', $subCategory_id)->first();
 
-        return new SubCategoryResource($subCategory);
+        if (explode("/",$request->path())[0] === 'api'){
+            return new SubCategoryResource($subCategory);
+        }
+
+        return redirect('sub-categories');
     }
 
     /**
@@ -99,10 +108,11 @@ class SubCategoryController extends Controller
     public function edit($id)
     {
         $groups = DB::table('groups')->get();
+        $categories = DB::table('categories')->get();
         $token = md5(uniqid(mt_rand(), true));
-        $editRow = DB::table('categories')->where('id', $id)->first();
+        $editRow = DB::table('sub_categories')->where('id', $id)->first();
 
-        return view('category.category_inputs', compact('editRow', 'groups', 'token'));
+        return view('subcategory.sub-category_inputs', compact('editRow', 'groups', 'categories','token'));
     }
 
 
@@ -111,7 +121,8 @@ class SubCategoryController extends Controller
      *
      * @param $id
      * @param Request $request
-     * @return SubCategoryResource
+     * @return object
+     * @return null
      */
     public function update($id, Request $request)
     {
@@ -126,7 +137,7 @@ class SubCategoryController extends Controller
             'group_id'         => $request['group_id'],
             'category_id'      => $request['category_id'],
             'name'             => $request['name'],
-            'slug'             => $request['slug'],
+            'slug'             => $request['slug'] ?? $request['group_id'].'-'.$request['category_id'].'-'.$request['subcategory_code'].'-'.$request['serial_no'],
             'icon'             => $request['icon'],
             'subcategory_code' => $request['subcategory_code'],
             'serial_no'        => $request['serial_no'],
@@ -137,7 +148,11 @@ class SubCategoryController extends Controller
 
         $subCategory = DB::table('sub_categories')->where('id', $id)->first();
 
-        return new SubCategoryResource($subCategory);
+        if (explode("/",$request->path())[0] === 'api'){
+            return new SubCategoryResource($subCategory);
+        }
+
+        return redirect('sub-categories');
     }
 
     /**

@@ -37,7 +37,7 @@
                                         <input type="text" name="serial_no" id="serial_no" class="form-control" placeholder="Enter Serial No" value="{{!empty($editRow) ? $editRow->serial_no : ''}}" style="width: 350px;">
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label for="status">Status<i class="text-danger">*</i> :</label>
+                                        <label for="status">Status :</label>
                                         <select class="form-control" name="status" id="status" style="width: 350px;">
                                             <option value="" disabled selected readonly="">Choose One</option>
                                             @if (!empty($editRow->status) && $editRow->status == 'Inactive')
@@ -56,7 +56,7 @@
                                 <!-- row -->
                                 <div class="row">
                                     <div class="form-group col-md-4">
-                                        <label for="icon">Group Icon<i class="text-danger">*</i> :</label>
+                                        <label for="icon">Group Icon :</label>
                                         <input {{ !empty($editRow->icon) ? '' : 'Not Found!' }} accept="image/*" name="icon" type="file" onchange="imageRandChange(this)" />
                                     </div>
                                     <div class="form-group col-md-4">

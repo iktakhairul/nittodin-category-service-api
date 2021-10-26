@@ -6,7 +6,7 @@
 
     <section class="content-header">
         <h1 class="breadcrumb ml-5 mt-4">
-            <i class="fa fa-box"></i>. Sub-Category
+            <i class="fa fa-box mr-2"></i>Sub-Category
         </h1>
         <div class="form-group col-md-12">
             <div class="pull-right">
@@ -27,8 +27,8 @@
                         <thead>
                         <tr>
                             <th width="20">No</th>
-                            <th>Group Id </th>
-                            <th>Category Id </th>
+                            <th>Group Name </th>
+                            <th>Category Name </th>
                             <th>Name </th>
                             <th>Slug </th>
                             <th>Icon </th>
@@ -44,15 +44,27 @@
                             @foreach ($subCategories as $key => $index)
                                 <tr>
                                     <td>{{ $key+1 }}</td>
-                                    <td>{{ $index->group_id ?? '' }}</td>
-                                    <td>{{ $index->category_id ?? '' }}</td>
+                                    <td>
+                                        @foreach($groups as $group)
+                                            @if($group->id === $index->group_id)
+                                                {{ $group->name}}
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach($categories as $category)
+                                            @if($category->id === $index->category_id)
+                                                {{ $category->name}}
+                                            @endif
+                                        @endforeach
+                                    </td>
                                     <td>{{ $index->name ?? '' }}</td>
                                     <td>{{ $index->slug ?? ''}}</td>
                                     <td>{{ $index->icon ?? ''}}</td>
                                     <td>{{ $index->subcategory_code ?? ''}}</td>
                                     <td>{{ $index->serial_no ?? ''}}</td>
                                     <td>{{ $index->short_details ?? ''}}</td>
-                                    <td>{{ $index->status ?? ''}}</td>
+                                    <td class="text-{{ $index->status == 'Active' ? 'success' : 'danger' }}">{!! $index->status == 'Active' ? 'ACTIVE' : 'INACTIVE' !!}</td>
                                     <td>
                                         <center>
                                             <div class="row">

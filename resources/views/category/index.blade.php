@@ -27,7 +27,7 @@
                         <thead>
                         <tr>
                             <th width="20">No</th>
-                            <th>Group Id </th>
+                            <th>Group Name </th>
                             <th>Name </th>
                             <th>Slug </th>
                             <th>Icon </th>
@@ -46,7 +46,7 @@
                                     <td>
                                         @foreach($groups as $group)
                                             @if($group->id === $index->group_id)
-                                                {{ $group->name }}
+                                                {{ $group->name}}
                                             @endif
                                         @endforeach
                                     </td>
