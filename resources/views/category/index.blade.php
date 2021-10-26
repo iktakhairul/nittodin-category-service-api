@@ -6,7 +6,7 @@
 
     <section class="content-header">
         <h1 class="breadcrumb ml-5 mt-4">
-            <i class="fa fa-box"></i>. Category
+            <i class="fa fa-box mr-2"></i> Category
         </h1>
         <div class="form-group col-md-12">
             <div class="pull-right">
@@ -23,7 +23,7 @@
             <!-- Horizontal Form -->
             <div class="box box-info">
                 <div class="box-body table-responsive">
-                    <table id="listProdukToko" class="table table-bordered table-stripped responsive">
+                    <table class="table table-bordered table-stripped responsive">
                         <thead>
                         <tr>
                             <th width="20">No</th>
@@ -43,21 +43,35 @@
                             @foreach ($categories as $key => $index)
                                 <tr>
                                     <td>{{ $key+1 }}</td>
-                                    <td>{{ $index->group_id ?? '' }}</td>
+                                    <td>
+                                        @foreach($groups as $group)
+                                            @if($group->id === $index->group_id)
+                                                {{ $group->name }}
+                                            @endif
+                                        @endforeach
+                                    </td>
                                     <td>{{ $index->name ?? '' }}</td>
                                     <td>{{ $index->slug ?? ''}}</td>
                                     <td>{{ $index->icon ?? ''}}</td>
                                     <td>{{ $index->category_code ?? '' }}</td>
                                     <td>{{ $index->serial_no ?? ''}}</td>
                                     <td>{{ $index->short_details ?? ''}}</td>
-                                    <td>{{ $index->status ?? ''}}</td>
+                                    <td class="text-{{ $index->status == 'Active' ? 'success' : 'danger' }}">{!! $index->status == 'Active' ? 'ACTIVE' : 'INACTIVE' !!}</td>
                                     <td>
                                         <center>
-                                            <a href="{{ url('category/edit', $index->id) }}"><button class="btn btn-primary btn-xs"><i class="fas fa-pencil-alt"></i></button></a>
-{{--                                            {{ Form::open(['method' => 'DELETE','url' => ['category.destroy', $index->id],'style'=>'display:inline']) }}--}}
-{{--                                            {{ csrf_field() }}--}}
-{{--                                            <button class="btn btn-danger btn-xs" id="delete" onclick="return confirm('Are you sure to delete data of {{$index->name}} ?')"><i class="fa fa-trash"></i></button>--}}
-{{--                                            {{ Form::close() }}--}}
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <a href="{{ url('category/update-status', $index->id) }}" class="btn btn-primary btn-xs btn-{{ $index->status == 'Active' ? 'info' : 'warning' }}" title="{{ $index->status == 'Active' ? 'Inactive ' : 'Activate ' }}" data-toggle="tooltip" data-placement="top"><i class="fa fa-{{ $index->status == 'Active' ? 'check-square ' : 'ban' }}"></i></a>
+                                                </div>
+                                                <div class="col-4">
+                                                    <a href="{{ url('category/edit', $index->id) }}"><button class="btn btn-primary btn-xs position-relative"><i class="fas fa-pencil-alt"></i></button></a>
+                                                </div>
+                                                <div class="col-4">
+                                                    <form method="GET" action="{{url('category/destroy', $index->id)}}">
+                                                        <button class="btn btn-danger btn-xs" id="delete" onclick="return confirm('Are you sure to delete data of {{$index->name}} ?')"><i class="fa fa-trash"></i></button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </center>
                                     </td>
                                 </tr>

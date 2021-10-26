@@ -26,7 +26,9 @@ class CategoryController extends Controller
             return new CategoryResourceCollection($categories);
         }
 
-        return view('category.index', compact('categories'));
+        $groups = DB::table('groups')->get();
+
+        return view('category.index', compact('categories', 'groups'));
     }
 
     /**
@@ -36,30 +38,33 @@ class CategoryController extends Controller
      */
     public function create()
     {
+        $groups = DB::table('groups')->get();
         $token = md5(uniqid(mt_rand(), true));
         $editRow = null;
 
-        return view('category.category_inputs', compact('editRow', 'token'));
+        return view('category.category_inputs', compact('editRow', 'groups', 'token'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return CategoryResource
+     * @return object
+     * @return null
      */
     public function store(Request $request)
     {
         $this->validate($request, [
-            "group_id"      => 'required',
-            "name"          => 'required',
-            "category_code" => 'required',
+            'group_id'      => 'required|exists:groups,id',
+            'name'          => 'required|unique:categories',
+            'category_code' => 'required|unique:categories',
+            'serial_no'     => 'required|unique:categories',
         ]);
 
         $data = [
             "group_id"      => $request['group_id'],
             "name"          => $request['name'],
-            "slug"          => $request['slug'],
+            "slug"          => $request['slug'] ?? $request['group_id'].'-'.$request['category_code'].'-'.$request['serial_no'],
             "icon"          => $request['icon'],
             "category_code" => $request['category_code'],
             "serial_no"     => $request['serial_no'],
@@ -71,7 +76,11 @@ class CategoryController extends Controller
         $category_id = DB::table('categories')->insertGetId($data);
         $category = DB::table('categories')->where('id', $category_id)->first();
 
-        return new CategoryResource($category);
+        if (explode("/",$request->path())[0] === 'api'){
+            return new CategoryResource($category);
+        }
+
+        return redirect('categories');
     }
 
     /**
@@ -88,24 +97,40 @@ class CategoryController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return View
+     */
+    public function edit($id)
+    {
+        $groups = DB::table('groups')->get();
+        $token = md5(uniqid(mt_rand(), true));
+        $editRow = DB::table('categories')->where('id', $id)->first();
+
+        return view('category.category_inputs', compact('editRow', 'groups', 'token'));
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param $id
      * @param Request $request
-     * @return CategoryResource
+     * @return object
+     * @return null
      */
     public function update($id, Request $request)
     {
         $this->validate($request, [
-            "group_id"      => 'required',
-            "name"          => 'required',
-            "category_code" => 'required',
+            'group_id'      => 'required|exists:groups,id',
+            'name'          => 'required',
+            'category_code' => 'required',
+            'serial_no'     => 'required',
         ]);
 
         DB::table('categories')->where('id', $id)->update([
             "group_id"      => $request['group_id'],
             "name"          => $request['name'],
-            "slug"          => $request['slug'],
+            "slug"          => $request['slug'] ?? $request['group_id'].'-'.$request['category_code'].'-'.$request['serial_no'],
             "icon"          => $request['icon'],
             "category_code" => $request['category_code'],
             "serial_no"     => $request['serial_no'],
@@ -116,19 +141,49 @@ class CategoryController extends Controller
 
         $category = DB::table('categories')->where('id', $id)->first();
 
-        return new CategoryResource($category);
+        if (explode("/",$request->path())[0] === 'api'){
+            return new CategoryResource($category);
+        }
+
+        return redirect('categories');
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param $id
+     * @param Request $request
      * @return Response|string
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         DB::table('categories')->where('id', $id)->delete();
 
-        return response()->json(null, 204);
+        if (explode("/",$request->path())[0] === 'api'){
+            return response()->json(null, 204);
+        }
+
+        return redirect('categories');
+    }
+
+    /**
+     * Update specified resource status.
+     *
+     * @param $id
+     * @return null
+     */
+    public function update_status($id)
+    {
+        $category = DB::table('categories')->find($id);
+
+        if($category->status === 'Active')
+        {
+            DB::table('categories')->where('id', $id)->update(['status' => 'Inactive']);
+        }elseif($category->status === 'Inactive')
+        {
+            DB::table('categories')->where('id', $id)->update(['status' => 'Active']);
+        }
+
+        return redirect('categories');
     }
 }

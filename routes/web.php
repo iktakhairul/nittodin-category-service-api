@@ -33,8 +33,11 @@ $router->get('categories', 'CategoryController@index');
 $router->get('category/create', 'CategoryController@create');
 $router->post('category/store', 'CategoryController@store');
 $router->get('category/show/{id}', 'CategoryController@show');
-$router->put('category/update/{id}', 'CategoryController@update');
-$router->delete('category/destroy/{id}', 'CategoryController@destroy');
+$router->get('category/edit/{id}', 'CategoryController@edit');
+$router->post('category/update/{id}', 'CategoryController@update');
+$router->get('category/destroy/{id}', 'CategoryController@destroy');
+$router->get('category/update-status/{id}', 'CategoryController@update_status');
+
 
 /**
  * Sub-Category Routes
