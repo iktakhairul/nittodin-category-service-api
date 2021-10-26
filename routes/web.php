@@ -21,10 +21,13 @@ $router->get('/home', function (){
  * Group Routes
  */
 $router->get('groups', 'GroupController@index');
-$router->post('group', 'GroupController@store');
-$router->get('group/{id}', 'GroupController@show');
-$router->put('group/{id}', 'GroupController@update');
-$router->delete('group/{id}', 'GroupController@destroy');
+$router->get('group/create', 'GroupController@create');
+$router->post('group/store', 'GroupController@store');
+$router->get('group/show/{id}', 'GroupController@show');
+$router->get('group/edit/{id}', 'GroupController@edit');
+$router->post('group/update/{id}', 'GroupController@update');
+$router->get('group/destroy/{id}', 'GroupController@destroy');
+$router->get('group/update-status/{id}', 'GroupController@update_status');
 
 /**
  * Category Routes

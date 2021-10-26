@@ -6,7 +6,7 @@
 
     <section class="content-header">
         <h1 class="breadcrumb ml-5 mt-4">
-            <i class="fa fa-box"></i>. Group
+            <i class="fa fa-industry mr-2"></i> Group
         </h1>
         <div class="form-group col-md-12">
             <div class="pull-right">
@@ -48,10 +48,22 @@
                                     <td>{{ $index->group_code ?? '' }}</td>
                                     <td>{{ $index->serial_no ?? ''}}</td>
                                     <td>{{ $index->short_details ?? ''}}</td>
-                                    <td>{{ $index->status ?? ''}}</td>
+                                    <td class="text-{{ $index->status == 'Active' ? 'success' : 'danger' }}">{!! $index->status == 'Active' ? 'ACTIVE' : 'INACTIVE' !!}</td>
                                     <td>
                                         <center>
-                                            <a href="{{ url('group/edit', $index->id) }}"><button class="btn btn-primary btn-xs"><i class="fas fa-pencil-alt"></i></button></a>
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <a href="{{ url('group/update-status', $index->id) }}" class="btn btn-primary btn-xs btn-{{ $index->status == 'Active' ? 'info' : 'warning' }}" title="{{ $index->status == 'Active' ? 'Inactive ' : 'Activate ' }}" data-toggle="tooltip" data-placement="top"><i class="fa fa-{{ $index->status == 'Active' ? 'check-square ' : 'ban' }}"></i></a>
+                                                </div>
+                                                <div class="col-4">
+                                                    <a href="{{ url('group/edit', $index->id) }}"><button class="btn btn-primary btn-xs position-relative"><i class="fas fa-pencil-alt"></i></button></a>
+                                                </div>
+                                                <div class="col-4">
+                                                    <form method="GET" action="{{url('group/destroy', $index->id)}}">
+                                                        <button class="btn btn-danger btn-xs" id="delete" onclick="return confirm('Are you sure to delete data of {{$index->name}} ?')"><i class="fa fa-trash"></i></button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </center>
                                     </td>
                                 </tr>

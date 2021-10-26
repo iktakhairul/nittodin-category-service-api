@@ -55,7 +55,19 @@
                                     <td>{{ $index->status ?? ''}}</td>
                                     <td>
                                         <center>
-                                            <a href="{{ url('sub-category/edit', $index->id) }}"><button class="btn btn-primary btn-xs"><i class="fas fa-pencil-alt"></i></button></a>
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <a href="{{ url('sub-category/update-status', $index->id) }}" class="btn btn-primary btn-xs btn-{{ $index->status == 'Active' ? 'info' : 'warning' }}" title="{{ $index->status == 'Active' ? 'Inactive ' : 'Activate ' }}" data-toggle="tooltip" data-placement="top"><i class="fa fa-{{ $index->status == 'Active' ? 'check-square ' : 'ban' }}"></i></a>
+                                                </div>
+                                                <div class="col-4">
+                                                    <a href="{{ url('sub-category/edit', $index->id) }}"><button class="btn btn-primary btn-xs position-relative"><i class="fas fa-pencil-alt"></i></button></a>
+                                                </div>
+                                                <div class="col-4">
+                                                    <form method="GET" action="{{url('sub-category/destroy', $index->id)}}">
+                                                        <button class="btn btn-danger btn-xs" id="delete" onclick="return confirm('Are you sure to delete data of {{$index->name}} ?')"><i class="fa fa-trash"></i></button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </center>
                                     </td>
                                 </tr>
